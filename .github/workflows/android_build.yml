@@ -16,9 +16,9 @@ jobs:
     - name: Decompress Project Files
       run: |
         if [ -f zara.zip ]; then
-          unzip -q zara.zip -d extracted_project
+          unzip -q zara.zip -d .
           echo "Files unzipped successfully."
-          cd extracted_project && ls -la
+          ls -la
         else
           echo "zara.zip not found"
           exit 1
@@ -30,23 +30,16 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Find and Build Android Project
+    - name: Setup Gradle and Build APK
       run: |
-        # প্রোজেক্টের মূল ফোল্ডার যেখানে gradlew আছে তা খুঁজে বের করা
-        GRADLE_PATH=$(find . -name "gradlew" | head -n 1)
-        
-        if [ -z "$GRADLE_PATH" ]; then
-          echo "Error: gradlew file not found anywhere in the zip!"
-          exit 1
+        # যদি gradlew ফাইল না থাকে, তবে গিটহাব নিজে থেকে একটি সচল ফাইল তৈরি করে নেবে
+        if [ ! -f gradlew ]; then
+          echo "gradlew not found, generating a new wrapper..."
+          gradle wrapper --gradle-version 8.2
         fi
         
-        PROJECT_ROOT=$(dirname "$GRADLE_PATH")
-        echo "Found Android project root at: $PROJECT_ROOT"
-        
-        cd "$PROJECT_ROOT"
         chmod +x gradlew
-        
-        echo "Starting APK Build..."
+        echo "Starting Final APK Build..."
         ./gradlew assembleDebug --stacktrace
 
     - name: Upload APK Artifact
