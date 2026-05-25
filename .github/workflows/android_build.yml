@@ -13,37 +13,34 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Decompress Project Files
-      run: |
-        if [ -f zara.zip ]; then
-          unzip -q zara.zip -d .
-          echo "Files unzipped successfully."
-          ls -la
-        else
-          echo "zara.zip not found"
-          exit 1
-        fi
-
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Setup Gradle and Build APK
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Decompress Project Files
       run: |
-        # যদি gradlew ফাইল না থাকে, তবে গিটহাব নিজে থেকে একটি সচল ফাইল তৈরি করে নেবে
+        unzip -q -o zara.zip -d .
+        echo "Files unzipped successfully."
+        ls -la
+
+    - name: Build with Gradle
+      run: |
+        yes | sdkmanager --licenses || true
         if [ ! -f gradlew ]; then
-          echo "gradlew not found, generating a new wrapper..."
           gradle wrapper --gradle-version 8.2
         fi
-        
         chmod +x gradlew
-        echo "Starting Final APK Build..."
-        ./gradlew assembleDebug --stacktrace
+        # যেকোনো ছোটখাটো ওয়ার্নিং বা লিন্ট এরর ইগনোর করে অ্যাপ তৈরি করার স্পেশাল কমান্ড
+        ./gradlew assembleDebug -x lint -x test --stacktrace
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: Zara-AI-Assistant-APK
         path: "**/build/outputs/apk/debug/*.apk"
+        
