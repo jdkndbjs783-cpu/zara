@@ -20,19 +20,12 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Setup Gradle 8.7
-      uses: gradle/actions/setup-gradle@v4
-      with:
-        gradle-version: '8.7'
-
     - name: Extract Project Files
       run: |
         unzip -o zara.zip
-        rm -f gradle/wrapper/gradle-wrapper.jar
-        gradle wrapper --gradle-version 8.7
         chmod +x gradlew
 
-    - name: Build with Gradle
+    - name: Build with Gradle Wrapper
       run: ./gradlew assembleRelease --no-daemon
       env:
         JAVA_HOME: ${{ env.JAVA_HOME }}
