@@ -20,15 +20,16 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
-    - name: Unzip and Organize Files
+    - name: Extract Project Files
       run: |
         unzip -o zara.zip
-        # যদি ফাইলগুলো কোনো সাব-ফোল্ডারে আনজিপ হয়ে থাকে, তবে সেগুলোকে মেইন ডিরেক্টরিতে নিয়ে আসবে
-        if [ -d "zara" ]; then
+        # শুধু gradlew ফাইলটিকে রান করার পারমিশন দেওয়া হচ্ছে
+        if [ -f "gradlew" ]; then
+          chmod +x gradlew
+        elif [ -f "zara/gradlew" ]; then
           mv zara/* .
-          rm -rf zara
+          chmod +x gradlew
         fi
-        chmod +x gradlew
 
     - name: Build with Gradle
       run: ./gradlew assembleRelease
