@@ -23,13 +23,7 @@ jobs:
     - name: Extract Project Files
       run: |
         unzip -o zara.zip
-        # শুধু gradlew ফাইলটিকে রান করার পারমিশন দেওয়া হচ্ছে
-        if [ -f "gradlew" ]; then
-          chmod +x gradlew
-        elif [ -f "zara/gradlew" ]; then
-          mv zara/* .
-          chmod +x gradlew
-        fi
+        chmod +x gradlew
 
     - name: Build with Gradle
       run: ./gradlew assembleRelease
