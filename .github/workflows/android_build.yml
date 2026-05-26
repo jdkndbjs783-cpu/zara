@@ -24,18 +24,17 @@ jobs:
       uses: gradle/actions/setup-gradle@v4
       with:
         gradle-version: '9.3.1'
+        cache-disabled: true # গিটহাবের পুরনো ক্যাশ মেমোরি বন্ধ করা হলো
 
-    - name: Extract and Fix Corrupt Wrapper File
+    - name: Extract and Generate Wrapper
       run: |
         unzip -o zara.zip
-        # ড্যামেজ জার ফাইলটিকে লাথি মেরে ডিলিট করা হচ্ছে
         rm -f gradle/wrapper/gradle-wrapper.jar
-        # গিটহাব নিজে থেকে একদম নতুন ফ্রেশ জার ফাইল জেনারেট করে নিচ্ছে
         gradle wrapper --gradle-version 9.3.1
         chmod +x gradlew
 
-    - name: Build with Fixed Gradle
-      run: ./gradlew assembleRelease --no-daemon
+    - name: Force Clean Build Without Cache
+      run: ./gradlew assembleRelease --no-daemon --no-configuration-cache --clean
       env:
         JAVA_HOME: ${{ env.JAVA_HOME }}
 
