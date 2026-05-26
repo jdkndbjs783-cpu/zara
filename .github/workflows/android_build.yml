@@ -20,9 +20,12 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
-    - name: Extract Project Files
+    - name: Extract Project and Fix Corrupt Wrapper
       run: |
         unzip -o zara.zip
+        # ড্যামেজ জার ফাইলটি ডিলিট করে নতুন ফ্রেশ ফাইল জেনারেট করা হচ্ছে
+        rm -f gradle/wrapper/gradle-wrapper.jar
+        gradle wrapper --gradle-version 8.7
         chmod +x gradlew
 
     - name: Build with Gradle
