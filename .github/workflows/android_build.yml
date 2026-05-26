@@ -24,11 +24,12 @@ jobs:
       uses: gradle/actions/setup-gradle@v4
       with:
         gradle-version: '9.3.1'
-        cache-disabled: true # গিটহাবের পুরনো ক্যাশ মেমোরি বন্ধ করা হলো
+        cache-disabled: true
 
-    - name: Extract and Generate Wrapper
+    - name: Extract Project Files from Workflow Folder
       run: |
-        unzip -o zara.zip
+        # যেহেতু ফাইলটি .github/workflows ফোল্ডারের ভেতরে আছে, তাই সেখান থেকে এটিকে এক্সট্র্যাক্ট করা হচ্ছে
+        unzip -o .github/workflows/zara.zip
         rm -f gradle/wrapper/gradle-wrapper.jar
         gradle wrapper --gradle-version 9.3.1
         chmod +x gradlew
